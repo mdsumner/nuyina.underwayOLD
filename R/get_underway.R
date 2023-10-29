@@ -41,7 +41,8 @@ if (inherits(dat, "try-error")) stop("appending failed, try with init = TRUE")
 
 dat$longitude <- abs(dat$longitude)  ## FIXME when geoserver feed is fixed
 
-dat <- dplyr::arrange(dplyr::distinct(dat), "date_time_utc")
+dat <- dplyr::arrange(dplyr::distinct(dat, .data$date_time_utc, .data$longitude, .data$latitude), .data$date_time_utc)
+#dat <- dat[c(1, diff(dat$date_time_utc) > 0), ]
 if (clobber) {
     file.remove("data-raw/nuyina_underway_0.parquet")
     file.copy(filename, "data-raw/nuyina_underway_0.parquet")
