@@ -41,7 +41,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
 
       - name: Get Nuyina underway
-        run: Rscript -e 'source("data-raw/get-underway.R", echo = TRUE)'
+        run: Rscript -e 'source("R/get-underway.R", echo = TRUE);get_underway()'
 
       - name: Commit
         run: |
