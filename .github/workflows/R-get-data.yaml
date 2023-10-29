@@ -6,10 +6,10 @@ on:
   pull_request:
     branches: [main]
 
-name: refresh-data
+name: get-data
 
 jobs:
-  get-data:
+  get-underway:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
