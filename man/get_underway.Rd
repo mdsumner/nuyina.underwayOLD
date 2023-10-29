@@ -8,6 +8,11 @@ get_underway(init = FALSE, filename = NULL)
 }
 \arguments{
 \item{init}{update existing data or initialize it (FALSE by default, data is appended)}
+
+\item{filename}{name of file to create (or use default)}
+}
+\value{
+status TRUE if success
 }
 \description{
 Data is read from the AADC geoserver feed.
@@ -18,7 +23,4 @@ We take a rough offset from the existing data and merge, it might make the query
 We convert 'date_time_utc' to POSIXct here.
 
 We apply a weird fix to longitudes if they are negative for a bug that appeared in October 2023.
-}
-\examples{
-get_underway()  ## data saved to "data-raw/nuyina_underway.parquet" by default
 }

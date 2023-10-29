@@ -10,12 +10,10 @@
 #' We apply a weird fix to longitudes if they are negative for a bug that appeared in October 2023.
 #'
 #' @param init update existing data or initialize it (FALSE by default, data is appended)
+#' @param filename name of file to create (or use default)
 #'
-#' @return
+#' @return status TRUE if success
 #' @export
-#'
-#' @examples
-#' get_underway()  ## data saved to "data-raw/nuyina_underway.parquet" by default
 get_underway <- function(init = FALSE, filename = NULL) {
     clobber <- FALSE
     if (is.null(filename)) {
