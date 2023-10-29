@@ -39,6 +39,8 @@ uwy$date_time_utc <- as.POSIXct(uwy$date_time_utc, "%Y/%m/%d %H:%M:%S", tz = "UT
 dat <- try(dplyr::bind_rows(dat, uwy))
 if (inherits(dat, "try-error")) stop("appending failed, try with init = TRUE")
 
+dat$longitude <- abs(dat$longitude)  ## FIXME when geoserver feed is fixed
+
 dat <- dplyr::arrange(dplyr::distinct(dat), "date_time_utc")
 if (clobber) {
     file.remove("data-raw/nuyina_underway_0.parquet")
