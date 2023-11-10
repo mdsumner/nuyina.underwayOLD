@@ -11,7 +11,7 @@ name: get-data
 jobs:
   get-underway:
     runs-on: ${{ matrix.config.os }}
-    container: rocker/geospatial
+    container: rocker/geospatial:dev-osgeo
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: r-lib/actions/setup-pandoc@v2
+      #- uses: r-lib/actions/setup-pandoc@v2
 
       - uses: r-lib/actions/setup-r@v2
         with:
