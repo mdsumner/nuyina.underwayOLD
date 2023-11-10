@@ -11,7 +11,7 @@ name: get-data
 jobs:
   get-underway:
     runs-on: ${{ matrix.config.os }}
-
+    container: rocker/geospatial
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
