@@ -20,7 +20,7 @@ Data is read from the AADC geoserver feed.
 \details{
 We take a rough offset from the existing data and merge, it might make the query faster.
 
-We convert 'date_time_utc' to POSIXct here.
+We convert 'datetime' to POSIXct here.
 
 We apply a weird fix to longitudes if they are negative for a bug that appeared in October 2023.
 }

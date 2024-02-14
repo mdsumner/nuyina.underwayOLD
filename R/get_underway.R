@@ -5,7 +5,7 @@
 #'
 #' We take a rough offset from the existing data and merge, it might make the query faster.
 #'
-#' We convert 'date_time_utc' to POSIXct here.
+#' We convert 'datetime' to POSIXct here.
 #'
 #' We apply a weird fix to longitudes if they are negative for a bug that appeared in October 2023.
 #'
@@ -33,17 +33,18 @@ uwy <- vapour::vapour_read_fields("WFS:https://data.aad.gov.au/geoserver/ows?ser
                  sql = sprintf("SELECT * FROM \"underway:nuyina_underway\" OFFSET %i", offset))
 
 uwy <- tibble::as_tibble(uwy)
-#name changed to datetime and doesn't need parsing
-#uwy$date_time_utc <- as.POSIXct(uwy$date_time_utc, "%Y/%m/%d %H:%M:%S", tz = "UTC")
-
+#name changed to datetime and doesn't need parsing (but maybe that's version-specific)
+if (!inherits(uwy$datetime, "POSIXct")) {
+ uwy$datetime <- as.POSIXct(uwy$datetime, "%Y/%m/%d %H:%M:%S", tz = "UTC")
+}
 ## if this fails should we just do again with init = TRUE?
 dat <- try(dplyr::bind_rows(dat, uwy))
 if (inherits(dat, "try-error")) stop("appending failed, try with init = TRUE")
 
 dat$longitude <- abs(dat$longitude)  ## FIXME when geoserver feed is fixed
 
-dat <- dplyr::arrange(dplyr::distinct(dat, .data$date_time_utc, .data$longitude, .data$latitude, .keep_all = TRUE), .data$date_time_utc)
-#dat <- dat[c(1, diff(dat$date_time_utc) > 0), ]
+dat <- dplyr::arrange(dplyr::distinct(dat, .data$datetime, .data$longitude, .data$latitude, .keep_all = TRUE), .data$datetime)
+
 if (clobber) {
     file.remove("data-raw/nuyina_underway_0.parquet")
     file.copy(filename, "data-raw/nuyina_underway_0.parquet")
@@ -51,10 +52,4 @@ if (clobber) {
 arrow::write_parquet(dat, filename, compression = "zstd")
 
 TRUE
-## we don't have voyage groupings in this data, so all "nuyina"
-
-#uwy <- tail(uwy, 30 * 24 * 60)
-#uwy <- uwy[seq(1, nrow(uwy), by = 4), ]
-#uwy2 <- dplyr::arrange(uwy2, date_time_utc)
-#try(trip::write_track_kml(rep("nuyina", nrow(uwy)), uwy$longitude, uwy$latitude, utc = uwy$date_time_utc, kml_file = "data-raw/nuyina.kmz"))
 }
