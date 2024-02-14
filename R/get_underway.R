@@ -33,7 +33,8 @@ uwy <- vapour::vapour_read_fields("WFS:https://data.aad.gov.au/geoserver/ows?ser
                  sql = sprintf("SELECT * FROM \"underway:nuyina_underway\" OFFSET %i", offset))
 
 uwy <- tibble::as_tibble(uwy)
-uwy$date_time_utc <- as.POSIXct(uwy$date_time_utc, "%Y/%m/%d %H:%M:%S", tz = "UTC")
+#name changed to datetime and doesn't need parsing
+#uwy$date_time_utc <- as.POSIXct(uwy$date_time_utc, "%Y/%m/%d %H:%M:%S", tz = "UTC")
 
 ## if this fails should we just do again with init = TRUE?
 dat <- try(dplyr::bind_rows(dat, uwy))
