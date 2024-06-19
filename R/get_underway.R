@@ -50,7 +50,7 @@ if (clobber) {
     file.remove("data-raw/nuyina_underway_0.parquet")
     file.copy(filename, "data-raw/nuyina_underway_0.parquet")
 }
-arrow::write_parquet(dat, filename, compression = "zstd")
+arrow::write_parquet(dat, filename)
 
 TRUE
 }
