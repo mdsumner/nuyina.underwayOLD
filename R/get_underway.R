@@ -42,7 +42,7 @@ dat <- try(dplyr::bind_rows(dat, uwy))
 if (inherits(dat, "try-error")) stop("appending failed, try with init = TRUE")
 
 bad <- abs(dat$longitude) < .1 & abs(dat$latitude) < .1  ## FIXME
-dat$longitude <- abs(dat$longitude)  ## FIXME when geoserver feed is fixed
+#dat$longitude <- abs(dat$longitude)  ## FIXME when geoserver feed is fixed
 if (any(bad)) dat <- dat[!bad, ]
 dat <- dplyr::arrange(dplyr::distinct(dat, .data$datetime, .data$longitude, .data$latitude, .keep_all = TRUE), .data$datetime)
 
