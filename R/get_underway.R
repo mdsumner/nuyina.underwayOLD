@@ -15,24 +15,26 @@
 #' @return status TRUE if success
 #' @export
 get_underway <- function(init = FALSE, filename = NULL) {
-    clobber <- FALSE
+
     if (is.null(filename)) {
-        clobber <- TRUE
         filename <- "data-raw/nuyina_underway.parquet"
     }
     dat <- NULL
     offset <- 0
     if (!init) {
         dat <- arrow::read_parquet(filename)
-            offset <- dim(dat)[1L] - 1024
+        time <- max(dat$datetime)
 
-}
+    }
 Sys.setenv("OGR_WFS_USE_STREAMING" = "YES")
 
-uwy <- vapour::vapour_read_fields("WFS:https://data.aad.gov.au/geoserver/ows?service=wfs&version=2.0.0&request=GetCapabilities",
-                 sql = sprintf("SELECT * FROM \"underway:nuyina_underway\" OFFSET %i", offset))
 
-uwy <- tibble::as_tibble(uwy)
+
+uwy <- vapour::vapour_read_fields("WFS:https://data.aad.gov.au/geoserver/ows?service=wfs&version=2.0.0&request=GetCapabilities",
+                 sql = sprintf("SELECT * FROM \"underway:nuyina_underway\" WHERE datetime > '%s'",
+                               format(max(dat$datetime, "%Y-%m-%dT%H:%M:%SZ"))))
+
+uwy <- dplyr::bind_rows(dat, tibble::as_tibble(uwy))
 #name changed to datetime and doesn't need parsing (but maybe that's version-specific)
 if (!inherits(uwy$datetime, "POSIXct")) {
  uwy$datetime <- as.POSIXct(uwy$datetime, "%Y/%m/%d %H:%M:%S", tz = "UTC")
@@ -46,10 +48,7 @@ bad <- abs(dat$longitude) < .1 & abs(dat$latitude) < .1  ## FIXME
 if (any(bad)) dat <- dat[!bad, ]
 dat <- dplyr::arrange(dplyr::distinct(dat, .data$datetime, .data$longitude, .data$latitude, .keep_all = TRUE), .data$datetime)
 
-if (clobber) {
-    file.remove("data-raw/nuyina_underway_0.parquet")
-    file.copy(filename, "data-raw/nuyina_underway_0.parquet")
-}
+unlink(filename)
 arrow::write_parquet(dat, filename)
 
 TRUE
