@@ -11,7 +11,7 @@ name: get-data
 jobs:
   get-underway:
     runs-on: ${{ matrix.config.os }}
-    container: mdsumner/gdal-builds:rocker-gdal-dev-python
+    container: mdsumner/hypertidy:main
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
 
     strategy:
