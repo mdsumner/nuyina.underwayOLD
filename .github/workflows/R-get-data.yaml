@@ -44,7 +44,7 @@ jobs:
         run: Rscript -e "install.packages('arrow', repos = c('https://apache.r-universe.dev', 'https://cloud.r-project.org'))"
 
       - name: Get Nuyina underway
-        run: Rscript -e 'source("R/get_underway.R", echo = TRUE);get_underway(init  = TRUE)'
+        run: Rscript -e 'source("R/get_underway.R", echo = TRUE);get_underway(init  = FALSE)'
 
       - name: Commit
         run: |

@@ -12,7 +12,7 @@
 #' @param init update existing data or initialize it (FALSE by default, data is appended)
 #' @param filename name of file to create (or use default)
 #'
-#' @return status TRUE if success
+#' @return the data
 #' @export
 get_underway <- function(init = FALSE, filename = NULL) {
 
@@ -21,18 +21,26 @@ get_underway <- function(init = FALSE, filename = NULL) {
     }
     dat <- NULL
     offset <- 0
+    query0 <- "SELECT * FROM \"underway:nuyina_underway\""
+    query1 <- "SELECT * FROM \"underway:nuyina_underway\" WHERE datetime > '{time1}'"
+
     if (!init) {
         dat <- arrow::read_parquet(filename)
-        time <- max(dat$datetime)
 
+        if (nrow(dat) < 1) {
+            query <- query0
+        } else {
+
+            time1 <- format(max(dat$datetime, "%Y-%m-%dT%H:%M:%SZ"))
+            query <- glue::glue(query1)
+        }
     }
 Sys.setenv("OGR_WFS_USE_STREAMING" = "YES")
 
 
 
 uwy <- vapour::vapour_read_fields("WFS:https://data.aad.gov.au/geoserver/ows?service=wfs&version=2.0.0&request=GetCapabilities",
-                 sql = sprintf("SELECT * FROM \"underway:nuyina_underway\" WHERE datetime > '%s'",
-                               format(max(dat$datetime, "%Y-%m-%dT%H:%M:%SZ"))))
+                 sql = query)
 
 uwy <- dplyr::bind_rows(dat, tibble::as_tibble(uwy))
 #name changed to datetime and doesn't need parsing (but maybe that's version-specific)
@@ -51,5 +59,5 @@ dat <- dplyr::arrange(dplyr::distinct(dat, .data$datetime, .data$longitude, .dat
 unlink(filename)
 arrow::write_parquet(dat, filename)
 
-TRUE
+ dat
 }
