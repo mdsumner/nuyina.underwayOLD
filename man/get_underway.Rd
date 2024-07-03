@@ -12,7 +12,7 @@ get_underway(init = FALSE, filename = NULL)
 \item{filename}{name of file to create (or use default)}
 }
 \value{
-status TRUE if success
+the data
 }
 \description{
 Data is read from the AADC geoserver feed.
