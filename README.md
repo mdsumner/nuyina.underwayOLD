@@ -8,17 +8,20 @@
 [![R-CMD-check](https://github.com/mdsumner/nuyina.underway/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mdsumner/nuyina.underway/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of nuyina.underway is to get the Nuyina underway feed. File is
+The way this works has changed. 
+
+
+The goal is to get the Nuyina underway feed. File is
 saved at this URL in Parquet:
 
-    https://github.com/mdsumner/nuyina.underway/raw/main/data-raw/nuyina_underway.parquet
+    https://github.com/mdsumner/uwy.new/releases/download/v0.0.1/nuyina_underway.parquet
 
 For an up to the minute update, read the entire stream with
 
 ``` r
 get_underway <- function(x) {
     ## read the bulk
-    d <- arrow::read_parquet("https://github.com/mdsumner/nuyina.underway/raw/main/data-raw/nuyina_underway.parquet")
+    d <- arrow::read_parquet("https://github.com/mdsumner/uwy.new/releases/download/v0.0.1/nuyina_underway.parquet")
     ## read the rest
     d1 <- tibble::as_tibble(vapour::vapour_read_fields("WFS:https://data.aad.gov.au/geoserver/ows?service=wfs&version=2.0.0&request=GetCapabilities",
                                                        sql = sprintf("SELECT * FROM \"underway:nuyina_underway\" WHERE datetime > '%s'", 
@@ -33,8 +36,6 @@ get_underway <- function(x) {
 
 
 d <- get_underway()
-```
-
 ## Code of Conduct
 
 Please note that the nuyina.underway project is released with a
